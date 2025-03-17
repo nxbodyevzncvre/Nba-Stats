@@ -283,14 +283,6 @@ body {
 
 
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-  
-}
-
-
 .under-main {
     background: linear-gradient(to top, #1E293B 0%, #0F172A 50%, #203460 100%);
     min-height: 100vh; 
@@ -385,11 +377,13 @@ body {
 
 .card-content .stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
+    grid-template-columns: 1fr 2fr;
     font-size: 1rem;
     text-align: left;
     margin-left: 20px;
+}
+.card-content .stat:nth-child(even){
+    text-align:end;
 }
 
 .card-content .stats div {
@@ -412,6 +406,47 @@ body {
     flex-direction: column;
     justify-content: center;
 }
+
+
+.default-footer {
+    margin-top: 2rem;
+    height: 50vh;
+}
+
+.container-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem; 
+}
+
+.container-footer h2 {
+    font-size: 3rem; 
+    color: white;
+}
+
+.container-footer p {
+    color: #99A1AF;
+    font-size: 1.5rem; 
+}
+
+.container-footer button {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: #2A3441;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.container-footer button:hover {
+    background-color: #484c53;
+}
+
 
 
 @media (max-width: 1024px) {
@@ -444,6 +479,19 @@ body {
 
     .card-content .stats .value {
         font-size: 1.3rem;
+    }
+
+    .container-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container-footer h2 {
+        font-size: 2.5rem;
+    }
+
+    .container-footer p {
+        margin: 1rem 0;
     }
 }
 
@@ -537,4 +585,9 @@ body {
     .card-content .stats .value {
         font-size: 1rem;
     }
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    
 }

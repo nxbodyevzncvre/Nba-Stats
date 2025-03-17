@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
-    <link rel="stylesheet" href="/fin_proj/public/css/styles.css">
+    <link rel="stylesheet" href="../../../public/css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 </head>
 <body>
@@ -192,8 +192,9 @@
                 </div>
             </div>
         </div>  
-        </div>
     </div>
+    <?php require_once "../layout/footer-default.php"?>
+</div>
 
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -203,13 +204,14 @@
             spaceBetween: 20,
             direction: 'horizontal',
             loop: true, 
+            parallax:true,
             autoplay: {
                 delay: 0,
                 disableOnInteraction: false,
                 reverseDirection: false,
                 pauseOnMouseEnter: true,
             },
-            speed: 5000, 
+            speed: 2500, 
             loopAdditionalSlides: 1,
             effect: 'slide',
             breakpoints: {
@@ -223,13 +225,14 @@
             spaceBetween: 20,
             direction: 'horizontal',
             loop: true,
+            parallax:true,
             autoplay: {
                 delay: 0,
                 disableOnInteraction: false,
                 reverseDirection: true,
                 pauseOnMouseEnter: true,
             },
-            speed: 5000,
+            speed: 2500,
             loopAdditionalSlides: 1,
             effect: 'slide',
             breakpoints: {
