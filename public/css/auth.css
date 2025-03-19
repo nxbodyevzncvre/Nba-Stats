@@ -240,6 +240,12 @@ input::placeholder {
 .hidden {
     display: none;
 }
+div .error-message{
+    color:red;
+    font-size:1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
 
 
 @media (max-width: 480px) {

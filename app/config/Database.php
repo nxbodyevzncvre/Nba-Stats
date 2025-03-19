@@ -1,10 +1,11 @@
 <?php
     class Database{
         private static $instance = null;
+        private $conn = null;
         private $host = 'localhost';
         private $user = 'root';
-        private $pass = '';
-        private $name = 'nba_stats';
+        private $pass = 'root';
+        private $name = 'nba-stats';
 
         private function __construct(){
             try{

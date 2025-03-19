@@ -1,27 +1,25 @@
 <?php
-require_once "../config/database.php";
-class User{
+require_once __DIR__ . "/../config/database.php";
+
+class User {
     private $db;
     private $table = "users";
 
-    private function __construct(){
+    public function __construct() {
         $this->db = Database::getInstance()->getConnection();
-
     }
 
-    public function register($username, $password){
-        if($this->findByUsername($username)){
-            return[
+    public function register($username, $password) {
+        if ($this->findByUsername($username)) {
+            return [
                 'success' => false,
                 'message' => 'User has already been registered'
-
             ];
-
         }
 
         $hashed_pass = password_hash($password, PASSWORD_BCRYPT);
         
-        try{
+        try {
             $sql = "INSERT INTO {$this->table} (username, password)
             VALUES (:username, :password)";
             $stmt = $this->db->prepare($sql);
@@ -29,93 +27,80 @@ class User{
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':password', $hashed_pass);
 
-            $stmt-execute();
+            $stmt->execute();
 
-            return[
-                'success' =>true,
+            return [
+                'success' => true,
+                'user_id' => $this->db->lastInsertId(),
                 'message' => 'You have been registered successfully!'
             ];
-        }catch(PDOException $err){
-            return[
+        } catch (PDOException $err) {
+            return [
                 'success' => false,
                 'message' => "Something went wrong, try again!"
             ];
-
-        };
-
-
+        }
     }
 
+    public function login($username, $password) {
+        $user = $this->findByUsername($username);
 
-
-    public function login($username, $password){
-        $user = findByUsername($username);
-
-        if(!$user){
-            return[
+        if (!$user) {
+            return [
                 'success' => false,
                 'message' => 'User not found!'
             ];
         }
 
-        if(password_verify($password, $user['password'])){
-            $_SESSION['user_id'] = $user['user_id'];
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
 
-            return[
+            return [
                 'success' => true,
-                'user' =>[
+                'user' => [
                     'id' => $user['id'],
                     'username' => $user['username']
                 ]
             ];
-
-        }else{
-            return[
+        } else {
+            return [
                 'success' => false,
                 'message' => 'Wrong password!'
             ];
         }
     }
 
-    public function logout(){
+    public function logout() {
         $_SESSION = [];
         session_destroy();
         return true;
-
     }
 
-
-    public function findByUsername($username){
-        try{
-            $sql = 'SELECT * FROM {$this->table} WHERE username = :username LIMIT 1';
+    public function findByUsername($username) {
+        try {
+            $sql = "SELECT * FROM {$this->table} WHERE username = :username LIMIT 1";
             $stmt = $this->db->prepare($sql);
-            $stmt -> bindParam(':username',$username);
+            $stmt->bindParam(':username', $username);
             $stmt->execute();
 
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        }catch(PDOException $err){
+        } catch (PDOException $err) {
             return null;
         }
     }
 
-
-    public function findById($id){
-        try{
-            "SELECT * FROM {$this->table} WHERE user_id = :user_id LIMIT 1";
-            $stmt = $this ->db->prepare($sql);
-            $stmt ->bindParam(":user_id", $id);
-            $stmt ->execute();
+    public function findById($id) {
+        try {
+            $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
             
-            return $stmt ->fetch(PDO::FETCH_ASSOC);
-
-        }catch(PDOException $err){
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $err) {
             return null;
         }
     }
-
-
 }
-
-
 ?>

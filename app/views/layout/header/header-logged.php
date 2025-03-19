@@ -2,7 +2,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="../../../public/images/nba-logo.png" alt="NBA Stats Logo" class="logo-img">
+                    <img src="/fin_proj/public/images/nba-logo.png" alt="NBA Stats Logo" class="logo-img">
                     <span class="logo-text"></span>
                 </div>
                 
