@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
-    <link rel="stylesheet" href="../../../public/css/styles.css">
+    <link rel="stylesheet" href="<?php echo '/fin_proj/public/css/default.css'; ?>">
+
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </head>
 <body>
     <div class="default-hero">
@@ -19,7 +21,7 @@
         </div>
         
         <div class="default-hero__header">
-            <?php include "../../views/layout/header-default.php"; ?>
+            <?php include_once __DIR__ . "/../layout/header/header-default.php"?>
         </div>
         
         <div class="default-hero__content">
@@ -193,7 +195,7 @@
             </div>
         </div>  
     </div>
-    <?php require_once "../layout/footer-default.php"?>
+    <?php include_once __DIR__ .  "/../layout/footer/footer-default.php"?>
 </div>
 
 

@@ -10,11 +10,11 @@ class AuthController {
 
     public function register() {
         if (isset($_SESSION['user_id'])) {
-            header("Location: /home");
+            header("Location: /fin_proj/home");
             exit;
         }
-        
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
+        if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $this->regProcess();
             return;
         }
@@ -29,33 +29,25 @@ class AuthController {
 
         $errors = [];
 
+
         if (empty($username)) {
             $errors['username'] = "Username is required";
         }
 
         if (empty($password)) {
-            $errors['password'] = 'Password is required';
+            $errors['password'] = "Password is required";
         } elseif (strlen($password) < 6) {
-            $errors['password'] = 'Password should have more than 6 symbols';
+            $errors['password'] = "Password must be at least 6 characters";
         }
 
-        if (empty($confirm_password)) {
-            $errors['confirm_password'] = "Password confirmation is required";
-        } elseif (strlen($confirm_password) < 6) {
-            $errors['confirm_password'] = "Password confirmation should have more than 6 symbols";
-        }
-
-        if ($password != $confirm_password) {
-            $errors['confirm_password'] = "Passwords are not equal";
+        if ($password !== $confirm_password) {
+            $errors['confirm_password'] = "Passwords do not match";
         }
 
         if (!empty($errors)) {
             $_SESSION['register_errors'] = $errors;
-            $_SESSION['register_data'] = [
-                'username' => $username,
-            ];
-
-            header('Location: /fin_proj/register'); 
+            $_SESSION['register_data'] = ['username' => $username];
+            header("Location: /fin_proj/register");
             exit;
         }
 
@@ -64,32 +56,34 @@ class AuthController {
         if ($result['success']) {
             $_SESSION['user_id'] = $result['user_id'];
             $_SESSION['username'] = $username;
-
-            header('Location: /home');
+            header("Location: /fin_proj/home");
             exit;
         } else {
             $_SESSION['register_errors'] = ['general' => $result['message']];
-            $_SESSION['register_data'] = [
-                'username' => $username,
-            ];
-
-            header('Location: /fin_proj/register');
+            $_SESSION['register_data'] = ['username' => $username];
+            header("Location: /fin_proj/register");
             exit;
         }
     }
 
     public function login() {
-        if (isset($_SESSION['user_id'])) {
-            header('Location: /home'); 
+
+        if ($_SERVER['REQUEST_METHOD'] === "POST") {
+            session_unset();
+        }
+
+
+        if (isset($_SESSION['user_id']) && $this->userModel->isValidSession($_SESSION['user_id'])) {
+            header("Location: /fin_proj/home");
             exit;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $this->logProcess();
             return;
         }
-        
-        require_once __DIR__ . '/../views/auth/auth.php'; 
+
+        require_once __DIR__ . '/../views/auth/auth.php';
     }
 
     private function logProcess() {
@@ -98,36 +92,42 @@ class AuthController {
 
         $errors = [];
 
+
         if (empty($username)) {
-            $errors['username'] = 'Username should be filled';
+            $errors['username'] = "Username is required";
         }
 
         if (empty($password)) {
-            $errors['password'] = 'Password should be filled';
+            $errors['password'] = "Password is required";
         }
 
         if (!empty($errors)) {
             $_SESSION['login_errors'] = $errors;
-            $_SESSION['login_data'] = [
-                'username' => $username,
-            ];
-
-            header('Location: /fin_proj/login'); 
+            $_SESSION['login_data'] = ['username' => $username];
+            header("Location: /fin_proj/login");
             exit;
         }
 
         $result = $this->userModel->login($username, $password);
 
         if ($result['success']) {
-            header('Location: /home');
+            $_SESSION['user_id'] = $result['user']['id'];
+            $_SESSION['username'] = $result['user']['username'];
+            header("Location: /fin_proj/home");
             exit;
         } else {
             $_SESSION['login_errors'] = ['general' => $result['message']];
             $_SESSION['login_data'] = ['username' => $username];
-
-            header('Location: /fin_proj/login'); 
+            header("Location: /fin_proj/login");
             exit;
         }
     }
+
+    public function logout() {
+        session_start();
+        session_unset();
+        session_destroy();
+        header("Location: /fin_proj/login");
+        exit;
+    }
 }
-?>

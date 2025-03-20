@@ -43,19 +43,27 @@ class User {
     }
 
     public function login($username, $password) {
-        $user = $this->findByUsername($username);
 
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+    
+        $user = $this->findByUsername($username);
+    
         if (!$user) {
             return [
                 'success' => false,
                 'message' => 'User not found!'
             ];
         }
-
+    
         if (password_verify($password, $user['password'])) {
+
+            session_regenerate_id();
+    
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-
+    
             return [
                 'success' => true,
                 'user' => [
@@ -70,7 +78,16 @@ class User {
             ];
         }
     }
+    
+    
 
+    public function isValidSession($userId) {
+        $query = "SELECT id FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch() !== false;
+    }
     public function logout() {
         $_SESSION = [];
         session_destroy();

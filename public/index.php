@@ -35,7 +35,7 @@ switch($url){
         $controller->login();
         break;
 
-    case '/fin-proj/home':
+    case '/fin_proj/home':
         $controller = new HomeController();
         $controller -> home();
         break;
