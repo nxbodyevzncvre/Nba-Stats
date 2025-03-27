@@ -91,7 +91,7 @@ class EspnApi{
 
     public function getTeamPlayers($teamId){
         try{
-            $url = $this->teamUrl . '/' . $teamId . '/roster';
+            $url = $this->teamsUrl . '/' . $teamId . '/roster';
             $data = $this -> makeRequest($url);
             return $data;
         }catch(Exception $e){
@@ -172,21 +172,14 @@ class EspnApi{
                 'limit' => $limit,
                 'dates' => date('Ymd') . '-' . date('Ymd', strtotime('+7 day'))
             ];
-            $data = $this->makeRequest($this->scoresUrl, $params);
+            $data = $this->makeRequest($this->scoresUrl);
             return $data['events'] ?? [];
         }catch(Exception $e){
             error_log("Error getting upcoming games: " . $e->getMessage());
             return [];
         }
     }
-
-
-
-
-
-
+    
 
 }
-
-
 ?>

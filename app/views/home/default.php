@@ -45,156 +45,103 @@
             <div class="default-main__title">
                 <p>YOUR <span class="default-main__highlight">BASKETBALL</span> JOURNEY STARTS HERE</p>
             </div>
-            <section class="last-nba-news ">
+            <section class="last-nba-news">
                 <div class="swiper-container right-swiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
+                        <?php if (empty($data['news'])): ?>
+                            <p>No news found.</p>
+                        <?php else: ?>
+                            <?php foreach ($data['news'] as $index => $article): ?>
+                                <?php if ($index < 5): ?>
+                                    <div class="swiper-slide" style="height:320px">
+                                        <?php 
+                                        $imageUrl = isset($article['images'][0]['url']) 
+                                            ? $article['images'][0]['url'] 
+                                            : '/fin_proj/public/images/lebron-default.png';
+                                        ?>
+                                        <div class="swiper-slide__image" style="background-image: url('<?php echo htmlspecialchars($imageUrl); ?>');"></div>
+                                        <h3 class="swiper-slide__title"><?php echo htmlspecialchars($article['headline']); ?></h3>
+                                        <p class="swiper-slide__description" style = "height:40px"><?php echo htmlspecialchars($article['description']); ?></p>
+                                        <div class="swiper-slide__footer">
+                                            <span>
+                                                <?php 
+                                                $pubDate = new DateTime($article['published']);
+                                                $now = new DateTime();
+                                                $interval = $now->diff($pubDate);
+
+                                                if ($interval->days == 0) {
+                                                    if ($interval->h == 0) {
+                                                        echo $interval->i . ' minutes ago';
+                                                    } else {
+                                                        echo $interval->h . ' hours ago';
+                                                    }
+                                                } else if ($interval->days == 1) {
+                                                    echo 'Yesterday';
+                                                } else {
+                                                    echo $pubDate->format('M j, Y');
+                                                }
+                                                ?>
+                                            </span>
+                                            <a href="https://www.espn.com/nba/" target="_blank">Read more</a>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </section>
+
             <section class="last-nba-news">
                 <div class="swiper-container left-swiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="swiper-slide__image"></div>
-                            <h3 class="swiper-slide__title">Lorem</h3>
-                            <p class="swiper-slide__description">descr about akwdk kiaia awdk aoaoao</p>
-                            <div class="swiper-slide__footer">
-                                <span>Posted: 05/06/24</span>
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
+                        <?php if (empty($data['news'])): ?>
+                            <p>No news found.</p>
+                        <?php else: ?>
+                            <?php foreach ($data['news'] as $index => $article): ?>
+                                <?php if ($index >= 5 && $index < 10): ?>
+                                    <div class="swiper-slide" style="height:320px">
+                                        <?php 
+                                        $imageUrl = isset($article['images'][0]['url']) 
+                                            ? $article['images'][0]['url'] 
+                                            : '/fin_proj/public/images/lebron-default.png';
+                                        ?>
+                                        <div class="swiper-slide__image" style="background-image: url('<?php echo htmlspecialchars($imageUrl); ?>');"></div>
+                                        <h3 class="swiper-slide__title"><?php echo htmlspecialchars($article['headline']); ?></h3>
+                                        <p class="swiper-slide__description" style = "height:40px"><?php echo htmlspecialchars($article['description']); ?></p>
+                                        <div class="swiper-slide__footer">
+                                            <span>
+                                                <?php 
+                                                $pubDate = new DateTime($article['published']);
+                                                $now = new DateTime();
+                                                $interval = $now->diff($pubDate);
+
+                                                if ($interval->days == 0) {
+                                                    if ($interval->h == 0) {
+                                                        echo $interval->i . ' minutes ago';
+                                                    } else {
+                                                        echo $interval->h . ' hours ago';
+                                                    }
+                                                } else if ($interval->days == 1) {
+                                                    echo 'Yesterday';
+                                                } else {
+                                                    echo $pubDate->format('M j, Y');
+                                                }
+                                                ?>
+                                            </span>
+                                            <a href="https://www.espn.com/nba/" target="_blank">Read more</a>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </section>
+
         </div>
     </main>
 
-    <div class="under-main">
-        <div class="upper-container">
-            <h2>Top NBA Players</h2>
-            <p>Discover the NBA’s finest talents and their statistics</p>
-        </div>
-        <div class="bottom-container">
-        <div class="cards-container">
-            <div class="card">
-                <img src="../../../public/images/lebron-default.png" alt="LeBron James">
-                <div class="card-content">
-                    <h2>LeBron James</h2>
-                    <div class="stats">
-                        <div class="stat"><span class="label">PPG</span><span class="value"> 25.7</span></div>
-                        <div class="stat"><span class="label">RPG</span><span class="value"> 12</span></div>
-                        <div class="stat"><span class="label">APG</span><span class="value"> 8.1</span></div>
-                        <div class="stat"><span class="label">FG%</span><span class="value"> 52.3</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img src="../../../public/images/lebron-default.png" alt="LeBron James">
-                <div class="card-content">
-                    <h2>LeBron James</h2>
-                    <div class="stats">
-                        <div class="stat"><span class="label">PPG</span><span class="value">25.7</span></div>
-                        <div class="stat"><span class="label">RPG</span><span class="value">12</span></div>
-                        <div class="stat"><span class="label">APG</span><span class="value">8.1</span></div>
-                        <div class="stat"><span class="label">FG%</span><span class="value">52.3</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <img src="../../../public/images/lebron-default.png" alt="LeBron James">
-                <div class="card-content">
-                    <h2>LeBron James</h2>
-                    <div class="stats">
-                        <div class="stat"><span class="label">PPG</span><span class="value">25.7</span></div>
-                        <div class="stat"><span class="label">RPG</span><span class="value">12</span></div>
-                        <div class="stat"><span class="label">APG</span><span class="value">8.1</span></div>
-                        <div class="stat"><span class="label">FG%</span><span class="value">52.3</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>  
-    </div>
     <?php include_once __DIR__ .  "/../layout/footer/footer-default.php"?>
 </div>
 

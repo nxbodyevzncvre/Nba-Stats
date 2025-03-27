@@ -61,8 +61,10 @@ class User {
 
             session_regenerate_id();
     
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
+            $this->createUserSession([
+                'id' => $user['id'],
+                'username' => $user['username']
+            ]);
     
             return [
                 'success' => true,
@@ -88,11 +90,28 @@ class User {
         $stmt->execute();
         return $stmt->fetch() !== false;
     }
+
+
+
     public function logout() {
         $_SESSION = [];
         session_destroy();
         return true;
     }
+
+
+    public function createUserSession($user){
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+    }
+
+    public function getUserFromSession(){
+        if(isset($_SESSION['user_id'])){
+            return $this->findById($_SESSION['user_id']);
+        }
+        return null;
+    }
+
 
     public function findByUsername($username) {
         try {

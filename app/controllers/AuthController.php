@@ -1,15 +1,13 @@
 <?php
-require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/BaseController.php";
 
-class AuthController {
-    private $userModel;
+class AuthController extends BaseController{
 
-    public function __construct() {
-        $this->userModel = new User();
-    }
+
+
 
     public function register() {
-        if (isset($_SESSION['user_id'])) {
+        if ($this->isLoggedIn()) {
             header("Location: /fin_proj/home");
             exit;
         }
@@ -54,8 +52,10 @@ class AuthController {
         $result = $this->userModel->register($username, $password);
 
         if ($result['success']) {
-            $_SESSION['user_id'] = $result['user_id'];
-            $_SESSION['username'] = $username;
+            $this->userModel->createUserSession([
+                'id' => $result['user_id'],
+                'username' => $username
+            ]);
             header("Location: /fin_proj/home");
             exit;
         } else {
@@ -73,7 +73,7 @@ class AuthController {
         }
 
 
-        if (isset($_SESSION['user_id']) && $this->userModel->isValidSession($_SESSION['user_id'])) {
+        if ($this->isLoggedIn()) {
             header("Location: /fin_proj/home");
             exit;
         }
@@ -111,8 +111,6 @@ class AuthController {
         $result = $this->userModel->login($username, $password);
 
         if ($result['success']) {
-            $_SESSION['user_id'] = $result['user']['id'];
-            $_SESSION['username'] = $result['user']['username'];
             header("Location: /fin_proj/home");
             exit;
         } else {
@@ -124,9 +122,7 @@ class AuthController {
     }
 
     public function logout() {
-        session_start();
-        session_unset();
-        session_destroy();
+        $this->userModel->logout();
         header("Location: /fin_proj/login");
         exit;
     }
