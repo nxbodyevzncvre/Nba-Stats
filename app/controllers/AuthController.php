@@ -123,7 +123,7 @@ class AuthController extends BaseController{
 
     public function logout() {
         $this->userModel->logout();
-        header("Location: /fin_proj/login");
+        header("Location: /fin_proj/home");
         exit;
     }
 }
