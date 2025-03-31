@@ -7,11 +7,9 @@
             </div>
             
             <nav class="nav-links">
-                <span class="nav-link active">Home</span>
-                <span class="nav-link">Teams</span>
-                <span class="nav-link">Players</span>
-                <span class="nav-link">Games</span>
-                <span class="nav-link">Stats</span>
+                <a href="/fin_proj/home" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/home') !== false ? 'active' : ''; ?>">Home</a>
+                <a href="/fin_proj/teams" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/teams') !== false ? 'active' : ''; ?>">Teams</a>
+                <a href="/fin_proj/players" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/players') !== false ? 'active' : ''; ?>">Players</a>
             </nav>
             
             <div class="user-menu">
@@ -22,7 +20,11 @@
                     </svg>
                 </button>
                 <div class="dropdown-menu hidden " id="dropdown-menu">
+                    <a href="/fin_proj/favorites/teams" class="dropdown-item">Favorite Teams</a>
                     <a href="/fin_proj/logout" class="dropdown-item">Logout</a>
+                    <?php if (isset($_SESSION['user_id']) && $this->userModel->isAdmin($_SESSION['user_id'])): ?>
+                        <a href="/fin_proj/admin" class="dropdown-item">Admin Panel</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -39,11 +41,9 @@
             </button>
         </div>
         <nav class="mobile-nav-links">
-            <span class="mobile-nav-link">Home</span>
-            <span class="mobile-nav-link">Teams</span>
-            <span class="mobile-nav-link">Players</span>
-            <span class="mobile-nav-link">Games</span>
-            <span class="mobile-nav-link">Stats</span>
+            <a href="/fin_proj/home" class="mobile-nav-link">Home</ф>
+            <a href="/fin_proj/teams" class="mobile-nav-link">Teams</a>
+            <a href="/fin_proj/players" class="mobile-nav-link">Players</a>
         </nav>
     </div>
 </header>

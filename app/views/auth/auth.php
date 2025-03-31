@@ -37,7 +37,6 @@
                         <?php if (isset($_SESSION['login_errors']['password'])): ?>
                             <div class="error-message"><?php echo $_SESSION['login_errors']['password']; ?></div>
                         <?php endif; ?>
-                        <span class="forgot-password">Forgot password?</span>
                     </div>
                     <button type="submit" class="auth-button">
                         <span>Sign In</span>

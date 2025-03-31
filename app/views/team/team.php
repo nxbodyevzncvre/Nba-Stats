@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
-    <title>Golden State Warriors - Team Page</title>
-    <link rel="stylesheet" href="../../../public/css/team.css">
+    <title><?php echo htmlspecialchars($data['team']['name']); ?> - Team Page</title>
+    <link rel="stylesheet" href="/fin_proj/public/css/team.css">
 </head>
 <body>
-    <?php require_once "../layout/header/header-logged.php"?>
+    <?php require_once  __DIR__ . "/../layout/header/header-logged.php"?>
     <div class="team-header">
-        <img src="../../../public/images/arena.jpg" alt="Team Arena" class="header-bg">
+        <img src="<?php echo htmlspecialchars($data['team']['stadium']['image'] ?? '../../../public/images/arena.jpg'); ?>" alt="Team Arena" class="header-bg">
         <div class="team-info-container">
             <div class="container">
                 <div class="team-info">
-                    <img src="../../../public/images/lebron-default.png" alt="Team Logo" class="team-logo">
+                    <img src="<?php echo htmlspecialchars($data['team']['logo']); ?>" alt="<?php echo htmlspecialchars($data['team']['name']); ?> Logo" class="team-logo">
                     <div class="team-details">
-                        <h1 class="team-name">Golden State Warriors</h1>
+                        <h1 class="team-name"><?php echo htmlspecialchars($data['team']['name']); ?></h1>
                         <div class="team-conference">
-                            <span>Western Conference</span>
+                            <span><?php echo htmlspecialchars($data['team']['conference']); ?> Conference</span>
                             <span class="dot"></span>
-                            <span>Pacific Division</span>
+                            <span><?php echo htmlspecialchars($data['team']['division']); ?> Division</span>
                         </div>
+                        <?php if ($data['user']['isLoggedIn']): ?>
+                        <div class="team-actions">
+                            <button class="favorite-team-btn <?php echo $data['isFavorite'] ? 'favorited' : ''; ?>" data-team-id="<?php echo htmlspecialchars($data['team']['id']); ?>">
+                                <span><?php echo $data['isFavorite'] ? 'Remove from Favorites' : 'Add to Favorites'; ?></span>
+                            </button>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -34,62 +41,40 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <p class="stat-label">Season Record</p>
-                    <p class="stat-value">29-15</p>
+                    <p class="stat-value"><?php echo htmlspecialchars($data['team']['record'] ?? '0-0'); ?></p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">Win Percentage</p>
-                    <p class="stat-value">.659</p>
+                    <p class="stat-value"><?php echo htmlspecialchars($data['team']['winPercentage'] ?? '.000'); ?></p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">Points Per Game</p>
-                    <p class="stat-value">119.2</p>
+                    <p class="stat-value"><?php echo htmlspecialchars($data['team']['ppg'] ?? '0.0'); ?></p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">Conference Rank</p>
-                    <p class="stat-value">4th</p>
+                    <p class="stat-value"><?php echo htmlspecialchars($data['team']['conferenceRank'] ?? 'N/A'); ?></p>
                 </div>
             </div>
 
             <!-- Team Roster -->
             <section class="roster-section">
                 <h2 class="section-title">Team Roster</h2>
-                <div class="roster-grid">
-                    <div class="player-card">
-                        <img src="../../../public/images/lebron-default.png" alt="Stephen Curry" class="player-image">
-                        <div>
-                            <h3 class="player-name">Stephen Curry</h3>
-                            <p class="player-position">Point Guard | #30</p>
-                        </div>
+                <?php if (empty($data['roster'])): ?>
+                    <p class="no-players">No roster information available.</p>
+                <?php else: ?>
+                    <div class="roster-grid">
+                        <?php foreach ($data['roster'] as $player): ?>
+                            <div class="player-card">
+                                <img src="<?php echo htmlspecialchars($player['headshot']); ?>" alt="<?php echo htmlspecialchars($player['fullName']); ?>" class="player-image" onerror="this.src='/fin_proj/public/images/player-default.png'">
+                                <div class="player-info">
+                                    <h3 class="player-name"><?php echo htmlspecialchars($player['fullName']); ?></h3>
+                                    <p class="player-position"><?php echo htmlspecialchars($player['position']); ?> | #<?php echo htmlspecialchars($player['jersey']); ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <div class="player-card">
-                        <img src="../../../public/images/lebron-default.png" alt="Stephen Curry" class="player-image">
-                        <div>
-                            <h3 class="player-name">Stephen Curry</h3>
-                            <p class="player-position">Point Guard | #30</p>
-                        </div>
-                    </div>
-                    <div class="player-card">
-                        <img src="../../../public/images/lebron-default.png" alt="Stephen Curry" class="player-image">
-                        <div>
-                            <h3 class="player-name">Stephen Curry</h3>
-                            <p class="player-position">Point Guard | #30</p>
-                        </div>
-                    </div>
-                    <div class="player-card">
-                        <img src="../../../public/images/lebron-default.png" alt="Klay Thompson" class="player-image">
-                        <div>
-                            <h3 class="player-name">Klay Thompson</h3>
-                            <p class="player-position">Shooting Guard | #11</p>
-                        </div>
-                    </div>
-                    <div class="player-card">
-                        <img src="../../../public/images/lebron-default.png" alt="Draymond Green" class="player-image">
-                        <div>
-                            <h3 class="player-name">Draymond Green</h3>
-                            <p class="player-position">Power Forward | #23</p>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </section>
 
             <!-- Recent Games & Schedule -->
@@ -98,47 +83,36 @@
                 <section>
                     <h2 class="section-title">Recent Games</h2>
                     <div class="games-list">
-                        <div class="game-card">
-                            <div class="game-header">
-                                <span class="game-date">Jan 20, 2024</span>
-                                <span class="game-result win">W</span>
-                            </div>
-                            <div class="team-score">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Warriors" class="small-team-logo">
-                                    <span>Warriors</span>
+                        <?php if (empty($data['recentGames'])): ?>
+                            <p class="no-games">No recent games available.</p>
+                        <?php else: ?>
+                            <?php foreach ($data['recentGames'] as $game): ?>
+                                <?php 
+                                    $isWin = $game['result'] === 'W';
+                                    $resultClass = $isWin ? 'win' : 'loss';
+                                ?>
+                                <div class="game-card">
+                                    <div class="game-header">
+                                        <span class="game-date"><?php echo htmlspecialchars($game['date']); ?></span>
+                                        <span class="game-result <?php echo $resultClass; ?>"><?php echo htmlspecialchars($game['result']); ?></span>
+                                    </div>
+                                    <div class="team-score">
+                                        <div class="team-with-logo">
+                                            <img src="<?php echo htmlspecialchars($game['homeTeam']['logo']); ?>" alt="<?php echo htmlspecialchars($game['homeTeam']['name']); ?>" class="small-team-logo">
+                                            <span><?php echo htmlspecialchars($game['homeTeam']['name']); ?></span>
+                                        </div>
+                                        <span class="score"><?php echo htmlspecialchars($game['homeTeam']['score']); ?></span>
+                                    </div>
+                                    <div class="team-score">
+                                        <div class="team-with-logo">
+                                            <img src="<?php echo htmlspecialchars($game['awayTeam']['logo']); ?>" alt="<?php echo htmlspecialchars($game['awayTeam']['name']); ?>" class="small-team-logo">
+                                            <span><?php echo htmlspecialchars($game['awayTeam']['name']); ?></span>
+                                        </div>
+                                        <span class="score"><?php echo htmlspecialchars($game['awayTeam']['score']); ?></span>
+                                    </div>
                                 </div>
-                                <span class="score">120</span>
-                            </div>
-                            <div class="team-score">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Lakers" class="small-team-logo">
-                                    <span>Lakers</span>
-                                </div>
-                                <span class="score">115</span>
-                            </div>
-                        </div>
-
-                        <div class="game-card">
-                            <div class="game-header">
-                                <span class="game-date">Jan 18, 2024</span>
-                                <span class="game-result loss">L</span>
-                            </div>
-                            <div class="team-score">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Warriors" class="small-team-logo">
-                                    <span>Warriors</span>
-                                </div>
-                                <span class="score">112</span>
-                            </div>
-                            <div class="team-score">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Suns" class="small-team-logo">
-                                    <span>Suns</span>
-                                </div>
-                                <span class="score">118</span>
-                            </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </section>
 
@@ -146,40 +120,134 @@
                 <section>
                     <h2 class="section-title">Upcoming Games</h2>
                     <div class="games-list">
-                        <div class="game-card">
-                            <span class="game-time">Jan 23, 2024 - 7:30 PM ET</span>
-                            <div class="teams-vs">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Warriors" class="small-team-logo">
-                                    <span>Warriors</span>
+                        <?php if (empty($data['upcomingGames'])): ?>
+                            <p class="no-games">No upcoming games available.</p>
+                        <?php else: ?>
+                            <?php foreach ($data['upcomingGames'] as $game): ?>
+                                <div class="game-card">
+                                    <span class="game-time"><?php echo htmlspecialchars($game['date']); ?> - <?php echo htmlspecialchars($game['time']); ?></span>
+                                    <div class="teams-vs">
+                                        <div class="team-with-logo">
+                                            <img src="<?php echo htmlspecialchars($game['homeTeam']['logo']); ?>" alt="<?php echo htmlspecialchars($game['homeTeam']['name']); ?>" class="small-team-logo">
+                                            <span><?php echo htmlspecialchars($game['homeTeam']['name']); ?></span>
+                                        </div>
+                                        <span class="vs">vs</span>
+                                        <div class="team-with-logo">
+                                            <span><?php echo htmlspecialchars($game['awayTeam']['name']); ?></span>
+                                            <img src="<?php echo htmlspecialchars($game['awayTeam']['logo']); ?>" alt="<?php echo htmlspecialchars($game['awayTeam']['name']); ?>" class="small-team-logo">
+                                        </div>
+                                    </div>
                                 </div>
-                                <span class="vs">vs</span>
-                                <div class="team-with-logo">
-                                    <span>Kings</span>
-                                    <img src="../../../public/images/lebron-default.png" alt="Kings" class="small-team-logo">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="game-card">
-                            <span class="game-time">Jan 25, 2024 - 8:00 PM ET</span>
-                            <div class="teams-vs">
-                                <div class="team-with-logo">
-                                    <img src="../../../public/images/lebron-default.png" alt="Warriors" class="small-team-logo">
-                                    <span>Warriors</span>
-                                </div>
-                                <span class="vs">vs</span>
-                                <div class="team-with-logo">
-                                    <span>Clippers</span>
-                                    <img src="../../../public/images/lebron-default.png" alt="Clippers" class="small-team-logo">
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </section>
             </div>
         </div>
     </main>
-    <?php require_once "../layout/footer/footer-logged.php"?>
+    <?php require_once __DIR__ . "/../layout/footer/footer-logged.php"?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteTeamBtn = document.querySelector('.favorite-team-btn');
+            if (favoriteTeamBtn) {
+                favoriteTeamBtn.addEventListener('click', function() {
+                    const teamId = this.getAttribute('data-team-id');
+                    toggleFavoriteTeam(teamId, this);
+                });
+            }
+
+            const favoritePlayerBtns = document.querySelectorAll('.favorite-player-btn');
+            favoritePlayerBtns.forEach(button => {
+                button.addEventListener('click', function() {
+                    const playerId = this.getAttribute('data-player-id');
+                    toggleFavoritePlayer(playerId, this);
+                });
+            });
+
+            function toggleFavoriteTeam(teamId, button) {
+                fetch('/fin_proj/team/toggle-favorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `team_id=${teamId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.action === 'added') {
+                            button.classList.add('favorited');
+                            button.querySelector('span').textContent = 'Remove from Favorites';
+                        } else {
+                            button.classList.remove('favorited');
+                            button.querySelector('span').textContent = 'Add to Favorites';
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating favorites');
+                });
+            }
+
+
+            function toggleFavoritePlayer(playerId, button) {
+                fetch('/fin_proj/player/toggle-favorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `player_id=${playerId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.action === 'added') {
+                            button.classList.add('favorited');
+                        } else {
+                            button.classList.remove('favorited');
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating favorites');
+                });
+            }
+        });
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const closeMenuButton = document.querySelector('.close-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            mobileMenu.classList.remove('hidden');
+        });
+
+
+        closeMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            mobileMenu.classList.add('hidden');
+        });
+
+        const avatar = document.getElementById('avatar');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        avatar.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!avatar.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

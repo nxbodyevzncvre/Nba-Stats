@@ -23,7 +23,7 @@
                 <h1 class="hero-title">Welcome back, <?php echo htmlspecialchars($data['user']['username'] ?? 'Guest')?></h1>                <p class="hero-subtitle">Stay updated with the latest NBA games, stats, and news. Your personalized basketball experience awaits.</p>
                 <div class="hero-buttons">
                     <button class="primary-button">Today's Games</button>
-                    <button class="secondary-button">Your Favorites</button>
+                    <a class="secondary-button" href="/fin_proj/favorites/teams">Your Favorites</a>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                                                 ? $game['competitions'][0]['competitors'][0]['score'] 
                                                 : '';
                                         ?>
-                                        <img src="<?php echo htmlspecialchars($homeTeamLogo); ?>" alt="<?php echo htmlspecialchars($homeTeamName); ?>" class="team-logo">
+                                        <a href="/fin_proj/team/<?php echo htmlspecialchars($game['competitions'][0]['competitors'][0]['team']['id'])?>"><img src="<?php echo htmlspecialchars($homeTeamLogo); ?>" alt="<?php echo htmlspecialchars($homeTeamName); ?>" class="team-logo"></a>
                                         <span class="team-name"><?php echo htmlspecialchars($homeTeamName); ?></span>
                                         <?php if ($isLive && !empty($homeTeamScore)): ?>
                                             <span class="team-score"><?php echo htmlspecialchars($homeTeamScore); ?></span>
@@ -80,7 +80,7 @@
                                                 ? $game['competitions'][0]['competitors'][1]['score'] 
                                                 : '';
                                         ?>
-                                        <img src="<?php echo htmlspecialchars($awayTeamLogo); ?>" alt="<?php echo htmlspecialchars($awayTeamName); ?>" class="team-logo">
+                                        <a href="/fin_proj/team/<?php echo htmlspecialchars($game['competitions'][0]['competitors'][1]['team']['id'])?>"><img src="<?php echo htmlspecialchars($awayTeamLogo); ?>" alt="<?php echo htmlspecialchars($awayTeamName); ?>" class="team-logo"></a>
                                         <span class="team-name"><?php echo htmlspecialchars($awayTeamName); ?></span>
                                         <?php if ($isLive && !empty($awayTeamScore)): ?>
                                             <span class="team-score"><?php echo htmlspecialchars($awayTeamScore); ?></span>

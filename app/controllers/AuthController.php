@@ -3,9 +3,6 @@ require_once __DIR__ . "/BaseController.php";
 
 class AuthController extends BaseController{
 
-
-
-
     public function register() {
         if ($this->isLoggedIn()) {
             header("Location: /fin_proj/home");
