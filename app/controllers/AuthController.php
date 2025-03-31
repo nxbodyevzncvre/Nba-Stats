@@ -1,8 +1,7 @@
 <?php
 require_once __DIR__ . "/BaseController.php";
 
-class AuthController extends BaseController{
-
+class AuthController extends BaseController {
     public function register() {
         if ($this->isLoggedIn()) {
             header("Location: /fin_proj/home");
@@ -23,7 +22,6 @@ class AuthController extends BaseController{
         $confirm_password = trim($_POST['confirm_password'] ?? '');
 
         $errors = [];
-
 
         if (empty($username)) {
             $errors['username'] = "Username is required";
@@ -49,11 +47,11 @@ class AuthController extends BaseController{
         $result = $this->userModel->register($username, $password);
 
         if ($result['success']) {
-            $this->userModel->createUserSession([
-                'id' => $result['user_id'],
-                'username' => $username
-            ]);
-            header("Location: /fin_proj/home");
+            if ($this->userModel->isAdmin($result['user']['id'])) {
+                header("Location: /fin_proj/admin/");
+            } else {
+                header("Location: /fin_proj/home");
+            }
             exit;
         } else {
             $_SESSION['register_errors'] = ['general' => $result['message']];
@@ -64,11 +62,9 @@ class AuthController extends BaseController{
     }
 
     public function login() {
-
         if ($_SERVER['REQUEST_METHOD'] === "POST") {
             session_unset();
         }
-
 
         if ($this->isLoggedIn()) {
             header("Location: /fin_proj/home");
@@ -88,7 +84,6 @@ class AuthController extends BaseController{
         $password = trim($_POST['password'] ?? '');
 
         $errors = [];
-
 
         if (empty($username)) {
             $errors['username'] = "Username is required";
