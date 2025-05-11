@@ -6,6 +6,8 @@
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
     <title><?php echo htmlspecialchars($data['team']['name']); ?> - Team Page</title>
     <link rel="stylesheet" href="/fin_proj/public/css/team.css">
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
     <?php require_once  __DIR__ . "/../layout/header/header-logged.php"?>
@@ -148,6 +150,13 @@
     <?php require_once __DIR__ . "/../layout/footer/footer-logged.php"?>
 
     <script>
+        const preloader = document.getElementById("preloader");
+        window.addEventListener("load", () => {
+            preloader.style.opacity = "0";
+            preloader.style.visibility = "hidden";
+            setTimeout(() => preloader.remove(), 500);
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const favoriteTeamBtn = document.querySelector('.favorite-team-btn');
             if (favoriteTeamBtn) {

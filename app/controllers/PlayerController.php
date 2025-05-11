@@ -68,7 +68,7 @@ class PlayerController extends BaseController {
                 $player['teamLogo'] = $teamLogo;
             }
             
-            // adding player to array
+
             $allPlayers = array_merge($allPlayers, $teamPlayers);
         }
         
@@ -100,26 +100,53 @@ class PlayerController extends BaseController {
         file_put_contents($cacheFile, json_encode($players));
     }
     
+    public function getAllPlayersJson() {
+        $allPlayers = $this->getCachedPlayers();
 
-    public function show($id) {
-        $isLoggedIn = $this->isLoggedIn();
-        $data['user'] = $this->getUserData();
-        
-        try {
-            $data['player'] = $this->espnApi->getPlayerById($id);
-            $data['stats'] = $this->espnApi->getPlayerStats($id);
-            
-            if ($isLoggedIn) {
-                $data['isFavorite'] = $this->playerModel->isPlayerFavorite($_SESSION['user_id'], $id);
-            } else {
-                $data['isFavorite'] = false;
-            }
-            
-            include __DIR__ . "/../views/player/player-details.php";
-        } catch (Exception $e) {
-            $data['error'] = $e->getMessage();
-            include __DIR__ . "/../views/error/not-found.php";
+        if (empty($allPlayers)) {
+            $allPlayers = $this->fetchAllPlayers();
+            $this->cacheAllPlayers($allPlayers);
         }
+
+
+        $search = $_GET['search'] ?? '';
+        $position = $_GET['position'] ?? 'all';
+        $team = $_GET['team'] ?? 'all';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $playersPerPage = $this->playersPerPage;
+
+
+        $filteredPlayers = array_filter($allPlayers, function ($player) use ($search, $position, $team) {
+            $matchesSearch = empty($search) || stripos($player['fullName'], $search) !== false;
+            $matchesPosition = $position === 'all' || stripos($player['position'], $position) !== false;
+            $matchesTeam = $team === 'all' || $player['teamId'] == $team;
+
+            return $matchesSearch && $matchesPosition && $matchesTeam;
+        });
+
+
+        $totalPlayers = count($filteredPlayers);
+        $totalPages = ceil($totalPlayers / $playersPerPage);
+        $offset = ($page - 1) * $playersPerPage;
+        $playersForPage = array_slice($filteredPlayers, $offset, $playersPerPage);
+
+
+        $response = [
+            'players' => $playersForPage,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'playersPerPage' => $playersPerPage,
+                'totalPlayers' => $totalPlayers,
+                'start' => $offset + 1,
+                'end' => min($offset + $playersPerPage, $totalPlayers),
+                'startPage' => max(1, $page - 2),
+                'endPage' => min($totalPages, $page + 2),
+            ],
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }
 ?>

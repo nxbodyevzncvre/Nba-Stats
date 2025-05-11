@@ -13,7 +13,7 @@ class BaseController {
 
     protected function isLoggedIn() {
         return isset($_SESSION['user_id']) && 
-               $this->userModel->isValidSession($_SESSION['user_id']);
+            $this->userModel->isValidSession($_SESSION['user_id']);
     }
 
     protected function getUserData() {

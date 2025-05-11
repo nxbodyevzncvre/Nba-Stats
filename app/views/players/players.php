@@ -6,10 +6,17 @@
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
     <title>NBA Players</title>
     <link rel="stylesheet" href="/fin_proj/public/css/players.css">
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
     <?php require_once __DIR__ . "/../layout/header/header-logged.php"?>
-    
+
+     <!-- LOADING SPINNER -->
+     <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
     <main class="main-content">
         <div class="container">
             <h1 class="page-title">NBA Players</h1>
@@ -81,14 +88,16 @@
                 <!-- Pagination -->
                 <div class="pagination">
                     <div class="pagination-info">
-                        Showing <?php echo ($data['pagination']['currentPage'] - 1) * $data['pagination']['playersPerPage'] + 1; ?> - 
-                        <?php echo min($data['pagination']['currentPage'] * $data['pagination']['playersPerPage'], $data['pagination']['totalPlayers']); ?> 
-                        of <?php echo $data['pagination']['totalPlayers']; ?> players
+                        Showing <?php 
+                            $start = ($data['pagination']['currentPage'] - 1) * $data['pagination']['playersPerPage'] + 1; 
+                            $end = min($data['pagination']['currentPage'] * $data['pagination']['playersPerPage'], $data['pagination']['totalPlayers']);
+                            echo $start . ' - ' . $end; 
+                        ?> of <?php echo $data['pagination']['totalPlayers']; ?> players
                     </div>
                     <div class="pagination-controls">
                         <?php if ($data['pagination']['currentPage'] > 1): ?>
-                            <a href="/fin_proj/players?page=1" class="pagination-link">First</a>
-                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['currentPage'] - 1; ?>" class="pagination-link">Previous</a>
+                            <a href="/fin_proj/players?page=1&search=<?php echo urlencode($searchTerm); ?>&position=<?php echo urlencode($positionFilter); ?>&team=<?php echo urlencode($teamFilter); ?>" class="pagination-link">First</a>
+                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['currentPage'] - 1; ?>&search=<?php echo urlencode($searchTerm); ?>&position=<?php echo urlencode($positionFilter); ?>&team=<?php echo urlencode($teamFilter); ?>" class="pagination-link">Previous</a>
                         <?php endif; ?>
                         
                         <?php
@@ -96,17 +105,18 @@
                         $endPage = min($data['pagination']['totalPages'], $data['pagination']['currentPage'] + 2);
                         
                         for ($i = $startPage; $i <= $endPage; $i++): ?>
-                            <a href="/fin_proj/players?page=<?php echo $i; ?>" class="pagination-link <?php echo ($i == $data['pagination']['currentPage']) ? 'active' : ''; ?>">
+                            <a href="/fin_proj/players?page=<?php echo $i; ?>&search=<?php echo urlencode($searchTerm); ?>&position=<?php echo urlencode($positionFilter); ?>&team=<?php echo urlencode($teamFilter); ?>" class="pagination-link <?php echo ($i == $data['pagination']['currentPage']) ? 'active' : ''; ?>">
                                 <?php echo $i; ?>
                             </a>
                         <?php endfor; ?>
                         
                         <?php if ($data['pagination']['currentPage'] < $data['pagination']['totalPages']): ?>
-                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['currentPage'] + 1; ?>" class="pagination-link">Next</a>
-                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['totalPages']; ?>" class="pagination-link">Last</a>
+                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['currentPage'] + 1; ?>&search=<?php echo urlencode($searchTerm); ?>&position=<?php echo urlencode($positionFilter); ?>&team=<?php echo urlencode($teamFilter); ?>" class="pagination-link">Next</a>
+                            <a href="/fin_proj/players?page=<?php echo $data['pagination']['totalPages']; ?>&search=<?php echo urlencode($searchTerm); ?>&position=<?php echo urlencode($positionFilter); ?>&team=<?php echo urlencode($teamFilter); ?>" class="pagination-link">Last</a>
                         <?php endif; ?>
                     </div>
                 </div>
+
             <?php endif; ?>
         </div>
     </main>
@@ -114,119 +124,120 @@
     <?php require_once __DIR__ . "/../layout/footer/footer-logged.php"?>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const playerSearch = document.getElementById('player-search');
-            const positionFilter = document.getElementById('position-filter');
-            const teamFilter = document.getElementById('team-filter');
-            const playerCards = document.querySelectorAll('.player-card');
-            
-            function filterPlayers() {
-                const searchTerm = playerSearch.value.toLowerCase();
-                const positionValue = positionFilter.value;
-                const teamValue = teamFilter.value;
-                
-                playerCards.forEach(card => {
-                    const playerName = card.querySelector('.player-name').textContent.toLowerCase();
-                    const playerPosition = card.dataset.position;
-                    const playerTeam = card.dataset.team;
-                    
-                    const matchesSearch = playerName.includes(searchTerm);
-                    const matchesPosition = positionValue === 'all' || playerPosition === positionValue;
-                    const matchesTeam = teamValue === 'all' || playerTeam === teamValue;
-                    
-                    if (matchesSearch && matchesPosition && matchesTeam) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-                
-                const visiblePlayers = document.querySelectorAll('.player-card[style="display: block;"]');
-                const playersGrid = document.getElementById('players-grid');
-                
-                if (visiblePlayers.length === 0) {
-                    if (!document.querySelector('.no-results')) {
-                        const noResults = document.createElement('div');
-                        noResults.className = 'no-results';
-                        noResults.innerHTML = '<p>No players match your filters.</p>';
-                        playersGrid.appendChild(noResults);
-                    }
+    const preloader = document.getElementById("preloader");
+
+
+    window.addEventListener("load", () => {
+        preloader.style.opacity = "0";
+        preloader.style.visibility = "hidden";
+        setTimeout(() => preloader.remove(), 500);
+    });
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        const playersGrid = document.getElementById('players-grid');
+        const playerSearch = document.getElementById('player-search');
+        const positionFilter = document.getElementById('position-filter');
+        const teamFilter = document.getElementById('team-filter');
+
+
+        async function fetchPlayers(page = 1) {
+            const searchTerm = playerSearch.value.trim();
+            const position = positionFilter.value;
+            const team = teamFilter.value;
+
+            try {
+                const response = await fetch(`/fin_proj/players/search?page=${page}&search=${encodeURIComponent(searchTerm)}&position=${encodeURIComponent(position)}&team=${encodeURIComponent(team)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    renderPlayers(data.players);
+                    updatePagination(data.pagination);
                 } else {
-                    const noResults = document.querySelector('.no-results');
-                    if (noResults) {
-                        noResults.remove();
-                    }
+                    console.error('Failed to fetch players:', response.statusText);
                 }
+            } catch (err) {
+                console.error('Error fetching players:', err);
             }
-            
-            playerSearch.addEventListener('input', filterPlayers);
-            positionFilter.addEventListener('change', filterPlayers);
-            teamFilter.addEventListener('change', filterPlayers);
-            
-            const favoritePlayerBtns = document.querySelectorAll('.favorite-player-btn');
-            favoritePlayerBtns.forEach(button => {
-                button.addEventListener('click', function() {
-                    const playerId = this.getAttribute('data-player-id');
-                    toggleFavoritePlayer(playerId, this);
+        }
+
+
+        function renderPlayers(players) {
+            playersGrid.innerHTML = '';
+            if (players.length === 0) {
+                playersGrid.innerHTML = '<div class="no-results"><p>No players match your filters.</p></div>';
+                return;
+            }
+
+            players.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.dataset.position = player.position.toLowerCase();
+                card.dataset.team = player.teamName.toLowerCase();
+                card.innerHTML = `
+                    <div class="player-header">
+                        <img src="${player.teamLogo}" alt="Team Logo" class="team-logo-small">
+                        <span class="player-number">#${player.jersey}</span>
+                    </div>
+                    <div class="player-image-container">
+                        <img src="${player.headshot}" alt="${player.fullName}" class="player-image" onerror="this.src='/fin_proj/public/images/player-default.png'">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">${player.fullName}</h3>
+                        <p class="player-position">${player.position}</p>
+                        <p class="player-team">${player.teamName}</p>
+                    </div>
+                `;
+                playersGrid.appendChild(card);
+            });
+        }
+
+
+        function updatePagination(pagination) {
+            const paginationControls = document.querySelector('.pagination-controls');
+            const paginationInfo = document.querySelector('.pagination-info');
+
+            paginationInfo.textContent = `Showing ${pagination.start} - ${pagination.end} of ${pagination.totalPlayers} players`;
+
+            paginationControls.innerHTML = '';
+
+            if (pagination.currentPage > 1) {
+                paginationControls.innerHTML += `
+                    <a href="#" class="pagination-link" data-page="1">First</a>
+                    <a href="#" class="pagination-link" data-page="${pagination.currentPage - 1}">Previous</a>
+                `;
+            }
+
+            for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+                paginationControls.innerHTML += `
+                    <a href="#" class="pagination-link ${i === pagination.currentPage ? 'active' : ''}" data-page="${i}">${i}</a>
+                `;
+            }
+
+            if (pagination.currentPage < pagination.totalPages) {
+                paginationControls.innerHTML += `
+                    <a href="#" class="pagination-link" data-page="${pagination.currentPage + 1}">Next</a>
+                    <a href="#" class="pagination-link" data-page="${pagination.totalPages}">Last</a>
+                `;
+            }
+
+
+            document.querySelectorAll('.pagination-link').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const page = parseInt(this.getAttribute('data-page'));
+                    fetchPlayers(page);
                 });
             });
-            
-            function toggleFavoritePlayer(playerId, button) {
-                fetch('/fin_proj/player/toggle-favorite', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `player_id=${playerId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (data.action === 'added') {
-                            button.classList.add('favorited');
-                            button.querySelector('span').textContent = 'Unlike';
-                        } else {
-                            button.classList.remove('favorited');
-                            button.querySelector('span').textContent = 'Like';
-                        }
-                    } else {
-                        alert(data.message || 'An error occurred');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while updating favorites');
-                });
-            }
-            const mobileMenuButton = document.querySelector('.mobile-menu-button');
-            const closeMenuButton = document.querySelector('.close-menu-button');
-            const mobileMenu = document.querySelector('.mobile-menu');
+        }
 
 
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.add('active');
-                mobileMenu.classList.remove('hidden');
-            });
+        playerSearch.addEventListener('input', () => fetchPlayers(1));
+        positionFilter.addEventListener('change', () => fetchPlayers(1));
+        teamFilter.addEventListener('change', () => fetchPlayers(1));
 
 
-            closeMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                mobileMenu.classList.add('hidden');
-            });
-
-            const avatar = document.getElementById('avatar');
-            const dropdownMenu = document.getElementById('dropdown-menu');
-
-            avatar.addEventListener('click', () => {
-                dropdownMenu.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!avatar.contains(event.target) && !dropdownMenu.contains(event.target)) {
-                    dropdownMenu.classList.remove('active');
-                }
-            });
-        });
+        fetchPlayers(1);
+    });
     </script>
+
 </body>
 </html>

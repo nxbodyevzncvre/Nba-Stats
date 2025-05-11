@@ -6,6 +6,8 @@
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
     <title>My Favorite Teams</title>
     <link rel="stylesheet" href="/fin_proj/public/css/favorites.css">
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
     <?php require_once __DIR__ . "/../layout/header/header-logged.php"?>

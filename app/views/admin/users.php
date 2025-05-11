@@ -6,6 +6,8 @@
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
     <title>Admin Panel - NBA Stats</title>
     <link rel="stylesheet" href="/fin_proj/public/css/admin.css">
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
     <?php require_once __DIR__ . "/../layout/header/header-logged.php"; ?>

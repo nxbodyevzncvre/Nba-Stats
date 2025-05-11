@@ -6,13 +6,21 @@
     <title>Teams | NBA Stats</title>
     <link href="https://fonts.googleapis.com/css?family=Big+Shoulders+Display" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo '/fin_proj/public/css/teams.css'; ?>">
-    <style>
-        
-    </style>
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
+      <!-- LOADING SPINNER -->
+      <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+
     <div class="page-container">
         <?php require_once __DIR__ . "/../layout/header/header-logged.php"; ?>
+
+
+
         <div class="header-section">
             <h1>NBA Teams</h1>
             <p>Explore all 30 NBA teams and their statistics</p>

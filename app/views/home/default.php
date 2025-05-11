@@ -6,6 +6,8 @@
     <title>NBA Stats</title>
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
     <link rel="stylesheet" href="<?php echo '/fin_proj/public/css/default.css'; ?>">
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>

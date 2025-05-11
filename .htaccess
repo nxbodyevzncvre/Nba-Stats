@@ -1,4 +1,10 @@
 RewriteEngine On
+
+# Redirect root URL to the main page
+RewriteCond %{REQUEST_URI} ^/fin_proj/?$ [NC]
+RewriteRule ^$ /fin_proj/public/index.php [L]
+
+# Handle other requests
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/index.php [QSA,L]

@@ -1,10 +1,12 @@
 <header>
     <div class="container">
         <div class="header-content">
-            <div class="logo">
-                <img src="/fin_proj/public/images/nba-logo.png" alt="NBA Stats Logo" class="logo-img">
-                <span class="logo-text">Stats</span>
-            </div>
+            <a href="/fin_proj/home" style="text-decoration:none;">
+                <div class="logo">
+                    <img src="/fin_proj/public/images/nba-logo.png" alt="NBA Stats Logo" class="logo-img">
+                    <span class="logo-text">Stats</span>
+                </div>
+            </a>
             
             <nav class="nav-links">
                 <a href="/fin_proj/home" class="<?php echo strpos($_SERVER['REQUEST_URI'], '/home') !== false ? 'active' : ''; ?>">Home</a>

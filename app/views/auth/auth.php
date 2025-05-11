@@ -6,6 +6,8 @@
     <title>NBA Stats - Sign In</title>
     <link rel="stylesheet" href="/fin_proj/public/css/auth.css">
     <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
+    <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
+
 </head>
 <body>
     <?php include_once __DIR__ . "/../layout/header/header-default.php"?>

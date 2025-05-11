@@ -1,4 +1,3 @@
-/* Global styles */
 * {
     margin: 0;
     padding: 0;
@@ -12,7 +11,6 @@ body {
     background-color: #0a1a2a;
 }
 
-/* Common components */
 .btn {
     padding: 0.75rem 2.5rem;
     font-size: 24px;
@@ -37,7 +35,7 @@ body {
     padding: 1rem;
 }
 
-/* Header styles */
+
 .header {
     background-color: transparent;
     color: white;
@@ -69,7 +67,39 @@ body {
     color: #cccccc;
 }
 
-/* Default page styles */
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-top: 5px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
 .default-hero {
     position: relative;
     min-height: 100vh;
@@ -156,7 +186,7 @@ body {
     width: 100%;
 }
 
-/* Default page main content */
+
 .default-main {
     position: relative;
     min-height: 100vh;
@@ -214,17 +244,21 @@ body {
     box-sizing: border-box;
     flex-shrink: 0; 
     width: 100%;
+    height:500px;
 }
 
 @media (min-width: 640px) {
     .swiper-slide {
         width: 50%;
+        height:350px;
     }
 }
 
 @media (min-width: 1024px) {
     .swiper-slide {
         width: 33.33%;
+        height:350px;
+
     }
 }
 
@@ -234,11 +268,16 @@ body {
     background: #ccc;
     border-radius: 10px;
     margin-bottom: 15px;
+    object-fit: cover;
+    object-position: center;
 }
 
 .swiper-slide__title {
     font-size: 1.5rem;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .swiper-slide__description {
@@ -246,6 +285,11 @@ body {
     color: #bbb;
     margin-bottom: 10px;
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .swiper-slide__footer {
@@ -279,7 +323,6 @@ body {
     }
 }
 
-/* Under main section */
 
 
 
@@ -411,6 +454,19 @@ body {
 .default-footer {
     margin-top: 2rem;
     height: 50vh;
+}
+
+.default-footer .btn {
+    background-color: white;
+    color: black;
+    text-decoration: none;
+    transition: 0.4s ease-in;
+}
+
+.default-footer .btn:hover{
+    background-color: #484c53;
+    color:white;
+
 }
 
 .container-footer {
@@ -587,7 +643,4 @@ body {
     }
 }
 
-/* Media queries for responsiveness */
-@media (max-width: 1024px) {
-    
-}
+
