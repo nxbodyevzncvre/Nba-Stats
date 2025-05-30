@@ -97,6 +97,7 @@ class TeamController extends BaseController{
                 'logo' => $team['logo']
             ];
         }, $rawTeams);
+        
             return [
                 'teams' => $teams,
                 'error' => null

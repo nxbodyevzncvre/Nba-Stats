@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../config/database.php";
+
 class User {
     protected $db;
     protected $table = 'users';
@@ -12,11 +13,13 @@ class User {
         try {
             $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
             
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ?: null;
         } catch (PDOException $err) {
+            error_log("Error in findById: " . $err->getMessage());
             return null;
         }
     }
@@ -25,32 +28,39 @@ class User {
         try {
             $sql = "SELECT * FROM {$this->table} WHERE username = :username LIMIT 1";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":username", $username);
+            $stmt->bindParam(":username", $username, PDO::PARAM_STR);
             $stmt->execute();
             
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ?: null;
         } catch (PDOException $err) {
+            error_log("Error in findByUsername: " . $err->getMessage());
             return null;
         }
     }
 
     public function getUsername($userId) {
+        if (!$userId) return null;
+        
         $user = $this->findById($userId);
         return $user['username'] ?? null;
     }
 
     public function isAdmin($userId) {
+        if (!$userId) return false;
+        
         $user = $this->findById($userId);
         return $user && isset($user['is_admin']) && $user['is_admin'] == 1;
     }
 
     public function getAllUsers() {
         try {
-            $sql = "SELECT * FROM {$this->table}";
+            $sql = "SELECT id, username, is_admin, created_at FROM {$this->table} ORDER BY username ASC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $err) {
+            error_log("Error in getAllUsers: " . $err->getMessage());
             return [];
         }
     }
@@ -59,10 +69,62 @@ class User {
         try {
             $sql = "DELETE FROM {$this->table} WHERE id = :id";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":id", $userId);
+            $stmt->bindParam(":id", $userId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $err) {
+            error_log("Error in deleteUser: " . $err->getMessage());
             return false;
+        }
+    }
+
+
+    public function updateUser($userId, $username, $password = null, $isAdmin = null) {
+        try {
+            $existingUser = $this->findByUsername($username);
+            if ($existingUser && $existingUser['id'] != $userId) {
+                return [
+                    'success' => false,
+                    'message' => 'Username already exists'
+                ];
+            }
+
+            $sql = "UPDATE {$this->table} SET username = :username";
+            if ($password !== null && trim($password) !== '') {
+                $sql .= ", password = :password";
+            }
+            if ($isAdmin !== null) {
+                $sql .= ", is_admin = :is_admin";
+            }
+            $sql .= " WHERE id = :id";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+            $stmt->bindValue(':id', (int)$userId, PDO::PARAM_INT);
+
+            if ($password !== null && trim($password) !== '') {
+                $stmt->bindValue(':password', password_hash(trim($password), PASSWORD_BCRYPT), PDO::PARAM_STR);
+            }
+            if ($isAdmin !== null) {
+                $stmt->bindValue(':is_admin', (int)$isAdmin, PDO::PARAM_INT);
+            }
+
+            if ($stmt->execute()) {
+                return [
+                    'success' => true,
+                    'message' => 'User updated successfully'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Failed to update user'
+                ];
+            }
+        } catch (PDOException $err) {
+            error_log("Error in updateUser: " . $err->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Database error occurred'
+            ];
         }
     }
 
@@ -87,7 +149,6 @@ class User {
     
             $user = $this->findByUsername($username);
             if ($user) {
-
                 if (session_status() !== PHP_SESSION_ACTIVE) {
                     session_start();
                 }
@@ -105,6 +166,7 @@ class User {
                 ]
             ];
         } catch (PDOException $err) {
+            error_log("Error in register: " . $err->getMessage());
             return ['success' => false, 'message' => 'Something went wrong!'];
         }
     }
@@ -152,7 +214,6 @@ class User {
         return true;
     }
 
-    
     private function createUserSession($user) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
@@ -181,13 +242,10 @@ class User {
             }
             
             return $teamIds;
-        } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
+        } catch (PDOException $err) {
+            error_log("Database error: " . $err->getMessage());
             return [];
         }
     }
-    
-
- 
 }
 ?>

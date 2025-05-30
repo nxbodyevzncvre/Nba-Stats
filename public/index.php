@@ -91,6 +91,8 @@ switch ($url) {
             echo json_encode(['error' => 'Method Not Allowed']);
         }
         break;
+
+
     case '/fin_proj/admin':
         $controller = new AdminController();
         if (isset($_SESSION['user_id'])) {
@@ -100,6 +102,31 @@ switch ($url) {
             exit;
         }
         break;
+
+    case (preg_match('/^\/fin_proj\/admin\/edit\/(\d+)$/', $url, $matches) ? true : false):
+        $userId = $matches[1];
+        $controller = new AdminController();
+        if (isset($_SESSION['user_id'])) {
+            $controller->editUser($userId);
+        } else {
+            header('Location: /fin_proj/login');
+            exit;
+        }
+        break;
+
+    case (preg_match('/^\/fin_proj\/admin\/update\/(\d+)$/', $url, $matches) ? true : false):
+        $userId = $matches[1];
+        $controller = new AdminController();
+        if (isset($_SESSION['user_id'])) {
+            $controller->updateUser($userId);
+        } else {
+            header('Location: /fin_proj/login');
+            exit;
+        }
+        break;
+
+
+        // /fin_proj/admin/update/{id}
 
     case (preg_match('/^\/fin_proj\/admin\/delete\/(\d+)$/', $url, $matches) ? true : false):
         $userId = $matches[1];

@@ -25,8 +25,8 @@ class AdminController extends BaseController {
     public function userList() {
         $users = $this->userModel->getAllUsers();
         
-
         $data = [
+            'users' => $users,
             'user' => [
                 'isLoggedIn' => isset($_SESSION['user_id']),
                 'username' => $this->userModel->getUsername($_SESSION['user_id'] ?? 0) ?: 'Guest',
@@ -49,6 +49,62 @@ class AdminController extends BaseController {
             $_SESSION['error_message'] = "Error deleting user.";
         }
         header("Location: /fin_proj/admin");
+        exit;
+    }
+
+    public function editUser($userId) {
+        $user = $this->userModel->findById($userId);
+        
+        if (!$user) {
+            $_SESSION['error_message'] = "User not found.";
+            header("Location: /fin_proj/admin");
+            exit;
+        }
+
+        $data = [
+            'user' => [
+                'isLoggedIn' => isset($_SESSION['user_id']),
+                'username' => $this->userModel->getUsername($_SESSION['user_id'] ?? 0) ?: 'Guest',
+                'isAdmin' => $this->isAdmin()
+            ],
+            'editUser' => $user
+        ];
+
+        include __DIR__ . '/../views/admin/edit-user.php';
+    }
+
+
+    public function updateUser($userId) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /fin_proj/admin");
+            exit;
+        }
+
+
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+
+        // Валидация
+        if (empty($username)) {
+            $_SESSION['error_message'] = "Username is required.";
+            header("Location: /fin_proj/admin/edit/$userId");
+            exit;
+        }
+
+
+
+        $passwordToUpdate = empty($password) ? null : $password;
+
+
+        $result = $this->userModel->updateUser($userId, $username, $passwordToUpdate);
+
+        if ($result['success']) {
+            $_SESSION['success_message'] = $result['message'];
+            header("Location: /fin_proj/admin");
+        } else {
+            $_SESSION['error_message'] = $result['message'];
+            header("Location: /fin_proj/admin/edit/$userId");
+        }
         exit;
     }
 }

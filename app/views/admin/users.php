@@ -7,7 +7,6 @@
     <title>Admin Panel - NBA Stats</title>
     <link rel="stylesheet" href="/fin_proj/public/css/admin.css">
     <link rel="shortcut icon" href="/fin_proj/public/images/nba-logo.png" type="image/x-icon">
-
 </head>
 <body>
     <?php require_once __DIR__ . "/../layout/header/header-logged.php"; ?>
@@ -33,6 +32,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Username</th>
+                                <th>Admin</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -43,6 +43,13 @@
                                         <td><?php echo htmlspecialchars($user['id']); ?></td>
                                         <td><?php echo htmlspecialchars($user['username']); ?></td>
                                         <td>
+                                            <?php echo $user['is_admin'] ? 'Yes' : 'No'; ?>
+                                        </td>
+                                        <td>
+                                            <a href="/fin_proj/admin/edit/<?php echo $user['id']; ?>" 
+                                               class="btn btn-primary btn-sm">
+                                                Edit
+                                            </a>
                                             <a href="/fin_proj/admin/delete/<?php echo $user['id']; ?>" 
                                                class="btn btn-danger btn-sm"
                                                onclick="return confirm('Are you sure you want to delete this user?');">
@@ -53,7 +60,7 @@
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center">No users found.</td>
+                                    <td colspan="4" class="text-center">No users found.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
